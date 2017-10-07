@@ -1,0 +1,29 @@
+{
+  "name": "libraryrt",
+  "version": "1.0.0",
+  "description": "\"RT AI\"",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cgallagher1/MadHacks2017.git"
+  },
+  "keywords": [
+    "bot",
+    "ai",
+    "rt",
+    "library"
+  ],
+  "author": "Michael, Charles, Jer, Joe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cgallagher1/MadHacks2017/issues"
+  },
+  "homepage": "https://github.com/cgallagher1/MadHacks2017#readme",
+  "dependencies": {
+    "botbuilder": "^3.11.0",
+    "restify": "^6.0.1"
+  }
+}
