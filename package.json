@@ -24,6 +24,7 @@
   "homepage": "https://github.com/cgallagher1/MadHacks2017#readme",
   "dependencies": {
     "botbuilder": "^3.11.0",
-    "restify": "^6.0.1"
+    "restify": "^6.0.1",
+    "whatwg-fetch": "^2.0.3"
   }
 }
