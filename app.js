@@ -37,6 +37,7 @@ bot.dialog('/', dialog)
     //Help!
     //==========
     .matches('help', helpResponse)
+    .matches('greeting', helpResponse)
 
     //==========
     //Base issue
@@ -83,7 +84,7 @@ bot.dialog('/', dialog)
 //==========
 function helpResponse(session)
 {
-    session.send("It's okay! I'm your Library Digital Assistant to help you get your issue to someone who can help. What appears to be the problem?")
+    session.send("I'm your Library Digital Assistant to help you get your issue to someone who can help. What appears to be the problem?")
 }
 
 //==========
