@@ -163,6 +163,10 @@ function yesResponse(session)
     else
     {
         session.send("Thank you, your information has been collected and submitted to Request Tracker. Have a nice day!");
+        for (x in myObj)
+        {
+            myObj[x] = "null";
+        }
     }
 }
 function noResponse(session)
