@@ -4,6 +4,8 @@ var builder = require('botbuilder');
 require('dotenv-extended').load();
 var request = require('request');
 
+
+
 // Setup Restify Server
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
@@ -17,6 +19,7 @@ var connector = new builder.ChatConnector({
 });
 
 // Listen for messages from users 
+server.get(/.*/, restify.serveStatic({ 'directory': '.', 'default': 'index.html' }));
 server.post('/api/messages', connector.listen());
 
 var bot = new builder.UniversalBot(connector, '/');
