@@ -162,12 +162,13 @@ function yesResponse(session)
     }
     else
     {
+        var bodyOfTicket = "Device Type:" + JSON.stringify(myObj.deviceType) + ". MAC Address: " + JSON.stringify(myObj.macaddr) + ". Residence Hall: " + JSON.stringify(myObj.resHall);
         var options = { method: 'POST',
         url: 'http://52.237.155.201:8080/REST/1.0/ticket/new',
         qs: { user: process.env.RT_USER, pass: process.env.RT_PASS },
         headers: 
          { 'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' },
-        formData: { content: 'id:ticket/new\nSubject:'+ JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\n Queue: test' } };
+        formData: { content: 'id:ticket/new\nSubject: ' + JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\nText: ' + bodyOfTicket + '\nQueue: Connectivity' } };
         
         request(options, function (error, response, body) {
         if (error) throw new Error(error);
