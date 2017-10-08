@@ -2,6 +2,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 require('dotenv-extended').load();
+var request = require('request');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -21,7 +22,6 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector, '/');
 
 var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/' + process.env.LUIS_ID + '?subscription-key=' + process.env.LUIS_KEY + '&verbose=true&timezoneOffset=0&q='
-//var model = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c449a0f8-86a6-4374-b4f7-ea124b11d692?subscription-key=a7b401710041460eba2408ee74e17be9&verbose=true&timezoneOffset=0&q='
 var recognizer = new builder.LuisRecognizer(model)
 var dialog = new builder.IntentDialog({recognizers: [recognizer]});
 
@@ -162,6 +162,18 @@ function yesResponse(session)
     }
     else
     {
+        var options = { method: 'POST',
+        url: 'http://52.237.155.201:8080/REST/1.0/ticket/new',
+        qs: { user: process.env.RT_USER, pass: process.env.RT_PASS },
+        headers: 
+         { 'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' },
+        formData: { content: 'id:ticket/new\nSubject:'+ JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\n Queue: test' } };
+        
+        request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        
+        console.log(body);
+        });
         session.send("Thank you, your information has been collected and submitted to Request Tracker. Have a nice day!");
         for (x in myObj)
         {
@@ -171,7 +183,18 @@ function yesResponse(session)
 }
 function noResponse(session)
 {
-    session.send("Thats okay! Try going to Bing, and searching \"%s find MAC Address.\" Can you find it now?\"", myObj.deviceType);
+    if(!isDone)
+    {
+        session.send("Thats okay! Try going to Bing, and searching \"%s find MAC Address.\" Can you find it now?\"", myObj.deviceType);        
+    }
+    else
+    {
+        session.send("Sorry about that, lets try again then! Clearing data now...What is your issue?");
+        for (x in myObj)
+        {
+            myObj[x] = "null";
+        }
+    }
 }
 
 //==========
@@ -199,54 +222,47 @@ function roomResponse(session)
 function emailResponse(session)
 {
     var user = session.message.text;
-    if(myObj.username == 'null')
+    myObj.username = user;
+        
+    if(myObj.issueType != 'null')
     {
-        myObj.username = user;
-        
-        if(myObj.issueType != 'null')
-        {
-            session.send("You are having a %s connectivity problem", myObj.issueType);
-        }
-        else
-        {
-            session.send("You have not stated whether your issue was wired or wireless. If you would like, do so now.");
-        }
-        
-        if(myObj.deviceType != 'null')
-        {
-            session.send("The issue is on a %s", myObj.deviceType);
-        }
-        else
-        {
-            session.send("You have not said what type of device you had. If you would like, do so now.");
-        }
-
-        if(myObj.macaddr != 'null')
-        {
-            session.send("Your MAC Address is %s", myObj.macaddr);
-        }
-        else
-        {
-            session.send("You have not given your MAC address. If you would like, do so now.");
-        }
-
-        if(myObj.resHall != 'null')
-        {
-            session.send("You live in %s", myObj.resHall);
-        }
-        else
-        {
-            session.send("You have not given your residence hall. If you would like, do so now.");
-        }
-        
-        isDone = true;
-        session.send("Your email is %s. If that is incorrect you can retype it", myObj.username);
-        session.send("Alright! Does all the previous information look correct?");
+        session.send("You are having a %s connectivity problem", myObj.issueType);
     }
     else
     {
-        sendRestartPrompt(session, "Carthage email", myObj.username);
+        session.send("You have not stated whether your issue was wired or wireless. If you would like, do so now.");
     }
+        
+    if(myObj.deviceType != 'null')
+    {
+        session.send("The issue is on a %s", myObj.deviceType);
+    }
+    else
+    {
+        session.send("You have not said what type of device you had. If you would like, do so now.");
+    }
+
+    if(myObj.macaddr != 'null')
+    {
+        session.send("Your MAC Address is %s", myObj.macaddr);
+    }
+    else
+    {
+        session.send("You have not given your MAC address. If you would like, do so now.");
+    }
+
+    if(myObj.resHall != 'null')
+    {
+        session.send("You live in %s", myObj.resHall);
+    }
+    else
+    {
+        session.send("You have not given your residence hall. If you would like, do so now.");
+    }
+        
+    isDone = true;
+    session.send("Your email is %s. If that is incorrect you can retype it", myObj.username);
+    session.send("Alright! Does all the previous information look correct?");
 }
 
 //==========
