@@ -157,12 +157,14 @@ function macResponse(session)
 }
 function yesResponse(session)
 {
+    
     if(!isDone)
     {
         session.send("Awesome! What is your MAC Address?");
     }
     else
     {
+       
         var bodyOfTicket = "Device Type:" + JSON.stringify(myObj.deviceType) + ". MAC Address: " + JSON.stringify(myObj.macaddr) + ". Residence Hall: " + JSON.stringify(myObj.resHall);
         var options = { method: 'POST',
         url: 'http://52.237.155.201:8080/REST/1.0/ticket/new',
@@ -172,11 +174,15 @@ function yesResponse(session)
         formData: { content: 'id:ticket/new\nSubject: ' + JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\nText: ' + bodyOfTicket + '\nQueue: General' } };
         
         request(options, function (error, response, body) {
+        var matches = body.match(/\d+/g);
+        var ticketNum = matches[matches.length -1];
+
+        session.send("Thank you, your information has been collected and submitted to Request Tracker.");
+        session.send("Here is your ticket: http://52.237.155.201:8080/Ticket/Display.html?id=%s",ticketNum);
         if (error) throw new Error(error);
-        
         console.log(body);
         });
-        session.send("Thank you, your information has been collected and submitted to Request Tracker. Have a nice day!");
+
         for (x in myObj)
         {
             myObj[x] = "null";
