@@ -92,8 +92,7 @@ function helpResponse(session)
 //==========
 function connectionResponse(session)
 {
-    //session.send("First things first, are you trying to make a wired or wireless connection?");
-    builder.Prompts.choice(session, "Are you trying to make a wired or wireless connection?", "wireless|wired");
+    session.send("First things first, are you trying to make a wired or wireless connection?");
 }
 
 function wirelessResponse(session)
