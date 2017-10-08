@@ -169,7 +169,7 @@ function yesResponse(session)
         qs: { user: process.env.RT_USER, pass: process.env.RT_PASS },
         headers: 
          { 'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' },
-        formData: { content: 'id:ticket/new\nSubject: ' + JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\nText: ' + bodyOfTicket + '\nQueue: Connectivity' } };
+        formData: { content: 'id:ticket/new\nSubject: ' + JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\nText: ' + bodyOfTicket + '\nQueue: General' } };
         
         request(options, function (error, response, body) {
         if (error) throw new Error(error);
