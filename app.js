@@ -26,11 +26,17 @@ var recognizer = new builder.LuisRecognizer(model)
 var dialog = new builder.IntentDialog({recognizers: [recognizer]});
 
 myObj = {'username':'null', 'issueType':'null', 'deviceType':'null', 'macaddr':'null', 'resHall':'null'};
+var isDone = false;
 
 bot.dialog('/', dialog)
     //========================
     //LUIS Dialog
     //========================
+
+    //==========
+    //Help!
+    //==========
+    .matches('help', helpResponse)
 
     //==========
     //Base issue
@@ -61,7 +67,7 @@ bot.dialog('/', dialog)
     //==========
     //Email
     //==========
-    .matches('username',emailResponce)
+    .matches('username',emailResponse)
 
     //==========
     //reset in event of wrong answers
@@ -73,11 +79,19 @@ bot.dialog('/', dialog)
     })
 
 //==========
+//Help!
+//==========
+function helpResponse(session)
+{
+    session.send("It's okay! I'm your Library Digital Assistant to help you get your issue to someone who can help. What appears to be the problem?")
+}
+
+//==========
 //Base issue
 //==========
 function connectionResponse(session)
 {
-    session.send("Is it a wireless or wired issue?");
+    session.send("First things first, are you trying to make a wired or wireless connection?");
 }
 
 function wirelessResponse(session)
@@ -115,7 +129,8 @@ function deviceResponse(session)
     if(myObj.deviceType == 'null')
     {
         myObj.deviceType = typeOfDevice;
-        session.send("Do you know how to find your MAC Address of your device?");
+        isDone =false;
+        session.send("Do you know how to find the MAC Address of your device?");
     }
     else
     {
@@ -132,7 +147,7 @@ function macResponse(session)
     if(myObj.macaddr == 'null')
     {
         myObj.macaddr = mac;
-        session.send("What residence hall do you live in?");
+        session.send("Thank you! What residence hall do you live in?");
     }
     else
     {
@@ -141,11 +156,18 @@ function macResponse(session)
 }
 function yesResponse(session)
 {
-    session.send("What is your MAC Address?");
+    if(!isDone)
+    {
+        session.send("Awesome! What is your MAC Address?");
+    }
+    else
+    {
+        session.send("Thank you, your information has been collected and submitted to Request Tracker. Have a nice day!");
+    }
 }
 function noResponse(session)
 {
-    session.send("Try going to Bing, and searching \"%s find MAC Address. Can you find it now?\"", myObj.deviceType);
+    session.send("Thats okay! Try going to Bing, and searching \"%s find MAC Address.\" Can you find it now?\"", myObj.deviceType);
 }
 
 //==========
@@ -158,7 +180,7 @@ function roomResponse(session)
     if(myObj.resHall == 'null')
     {
         myObj.resHall = room;
-        session.send("What is your Carthage email?");
+        session.send("Great! Last Question! What is your Carthage email?");
     }
     else
     {
@@ -170,7 +192,7 @@ function roomResponse(session)
 //Email
 //==========
 
-function emailResponce(session)
+function emailResponse(session)
 {
     var user = session.message.text;
     if(myObj.username == 'null')
@@ -183,12 +205,12 @@ function emailResponce(session)
         }
         else
         {
-            session.send("You have not stated whether your issue was wired or wirelss. If you would like, do so now.");
+            session.send("You have not stated whether your issue was wired or wireless. If you would like, do so now.");
         }
         
         if(myObj.deviceType != 'null')
         {
-            session.send("The issue is on your %s", myObj.deviceType);
+            session.send("The issue is on a %s", myObj.deviceType);
         }
         else
         {
@@ -213,7 +235,9 @@ function emailResponce(session)
             session.send("You have not given your residence hall. If you would like, do so now.");
         }
         
-        session.send("Your email is %s", myObj.username);
+        isDone = true;
+        session.send("Your email is %s. If that is incorrect you can retype it", myObj.username);
+        session.send("Alright! Does all the previous information look correct?");
     }
     else
     {
