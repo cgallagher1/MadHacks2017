@@ -164,7 +164,7 @@ function yesResponse(session)
     }
     else
     {
-       
+       //This will use the request module to submit a new ticket to the RT server
         var bodyOfTicket = "Device Type:" + JSON.stringify(myObj.deviceType) + ". MAC Address: " + JSON.stringify(myObj.macaddr) + ". Residence Hall: " + JSON.stringify(myObj.resHall);
         var options = { method: 'POST',
         url: 'http://52.237.155.201:8080/REST/1.0/ticket/new',
@@ -174,9 +174,11 @@ function yesResponse(session)
         formData: { content: 'id:ticket/new\nSubject: ' + JSON.stringify(myObj.issueType) + ' issue with ' + JSON.stringify(myObj.deviceType) + '\nText: ' + bodyOfTicket + '\nQueue: General' } };
         
         request(options, function (error, response, body) {
+        //This code parses out the ticket number. The number will always be the last one in the body
         var matches = body.match(/\d+/g);
         var ticketNum = matches[matches.length -1];
-
+        
+        //This sends a link to the user with their ticket #
         session.send("Thank you, your information has been collected and submitted to Request Tracker.");
         session.send("Here is your ticket: http://52.237.155.201:8080/Ticket/Display.html?id=%s",ticketNum);
         if (error) throw new Error(error);
